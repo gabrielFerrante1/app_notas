@@ -1,0 +1,18 @@
+{
+	"name": "app_notas",
+	"require": {
+		"php": ">= 7.0"
+	},
+	"authors": [
+		{
+			"name": "gabrielFerrante1",
+			"email": "gabriel07ferrante@gmail.com"
+		}
+	],
+	"autoload": {
+		"psr-4": {
+			"App\\": "App/",
+			"MF\\": "vendor/MF/"
+		}
+	}
+}

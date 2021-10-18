@@ -1,0 +1,191 @@
+  <style>
+      body {
+          background-color: rgb(255, 255, 255);
+      }
+      .btn-fix {
+          position: fixed;
+          right: 38px;
+          bottom: 40px;
+          background-color: orangered;
+          padding: 15px;
+          border-radius: 30px;
+          border: none;
+          outline: none;
+          z-index: 1000;
+      }
+      .btn-fix i {
+        color: white;
+        font-size: 19px;
+      }
+      .cartao {
+          border: 1px solid gray;
+          background-color: rgb(255, 255, 255);
+          padding: 5px;
+          transition: all 0.6s;
+      }
+      .cartao h3 {
+          border-bottom: 1px solid rgb(255, 147, 7);
+          color: rgb(255, 115, 0);
+          word-wrap: break-word;
+          padding-bottom: 3px;
+      }
+      .cartao span {
+          color: rgb(0, 0, 0);
+      }
+      .cartao:hover {
+          transform: scale(1.1);
+          box-shadow: gray 0px 0px 15px 0px;
+          background-color: rgb(248, 247, 247);
+      }
+  </style>
+
+
+  <!--Botão Para criação de nova tarefa-->
+  <button class="btn-fix"  data-bs-toggle="modal" data-bs-target="#staticBackdrop"><i class="fas fa-plus"></i></button>
+
+  <!-- Modal -->
+  <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Adicionar Nota</h5>
+        </div>
+        <!--Form de criação de nota-->
+        <div class="modal-body">
+          <form method="post" action="/nota">
+             <label>Titulo da nota:</label>
+             <input class="form-control" type="text" name="titulo">
+
+             <br>
+
+             <label>Descrição da nota:</label>
+             <textarea class="form-control" name="nota"></textarea>
+             
+             <br>
+
+             <label>Nível De Prioridade Da Nota:</label>
+             <select class="form-control" name="prioridade">
+                 <option value="0">Selecionar Prioridade Da Nota</option>
+                 <option value="1">Nível 1</option>
+                 <option value="2">Nível 2</option>
+                 <option value="3">Nível 3</option>
+             </select>
+
+        </div>
+        <div class="modal-footer">
+          <button onclick="d()" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+          <button  type="submit" class="btn btn-success">Salvar</button>
+        </div>
+    </form>
+      </div>
+    </div>
+  </div>
+  
+
+  <div class="container-fluid p-5">
+      <div class="row">
+         <div class="col-lg-12 mb-5">
+             <form method="get">
+                 <input style="width: 89%;border: 1px solid gray;padding: 5px;outline: none;" placeholder="Pesquisar por notas..." type="search" name="p">
+                 <button style="width: 10%;background-color: orange;border: 1px solid rgb(255, 255, 255);padding: 5px;" type="submit">Procurar</button>
+             </form>
+         </div>
+      </div>
+
+
+      <div class="row d-flex justify-content-center">
+
+        <?php if(empty($this->view->notas)) { ?>
+             <div>
+                 <span style="font-weight: 600;font-size: 18px;">Para adicionar uma nota, clique no botão <span style="color: rgb(255, 145, 0);"> laranja </span>localizado no canto inferior esquerdo da página</span>
+             </div>
+         <?php }?>
+
+      <?php foreach($this->view->notas as $n) { ?>
+
+
+        <div class="col-lg-4 mb-5">
+            <div class="cartao">
+                <h3><?=$n['titulo']?> <i style="float: right;font-size: 15px;padding:9px;color: rgb(255, 4, 4);" onclick="co(<?=$n['id']?>)" class="far fa-trash-alt"></i>     <i style="float: right;font-size: 15px;padding:9px;color: rgb(0, 0, 0);" onclick="editar(<?= $n['id']?>)" class="fas fa-pencil-alt"></i></h3>
+                <span  id="tarefa_<?= $n['id'] ?>"><?=$n['nota']?></span>
+                <hr style="background: rgb(255, 145, 0);"> 
+                <?php
+                 $cor = null;
+                 if($n['prioridade'] == 0) {
+                     $cor = 'orangered';
+                 } else if($n['prioridade'] == 1) {
+                     $cor = 'blue';
+                 } else if($n['prioridade'] == 2) {
+                     $cor = 'yellow';
+                 } else if($n['prioridade'] == 3) {
+                     $cor = 'red';
+                 }?>
+                <span style="font-size: 14px;color: rgb(255, 115, 0);font-weight: 600;">Prioridade: <span style="font-size: 15px;color: <?= $cor ?>"><?=$n['prioridade']?></span></span>
+                <span style="font-size: 14px;color: rgb(255, 115, 0);font-weight: 600;">Data: <span style="font-size: 13px;color: rgb(255, 115, 0);"><?=$n['data']?></span></span>
+            </div>
+        </div>
+
+       <?php } ?>
+
+        </div>
+      </div>
+  </div>
+
+<script>
+    function d() {
+        event.preventDefault();
+    }
+
+       function editar(id) {
+           //criar um form de edição
+           let form = document.createElement('form')
+           //encaminhando dados do form para tarefa controller para atualizar no banco de dados
+           form.action = '/atualizar';
+           form.method = 'post';
+           form.className = 'row';
+
+           //criar um input para entrada do texto
+           let inputTarefa = document.createElement('textarea')
+           inputTarefa.type = 'text';
+           inputTarefa.name = 'nota';
+           inputTarefa.className = 'col-10 offset-1 form-control';
+           inputTarefa.value = document.getElementById('tarefa_'+id).innerHTML;
+
+           //criar um input hidden para guardar o id da tarefa
+           let inputId = document.createElement('input');
+           inputId.type = 'hidden';
+           inputId.name = 'id';
+           inputId.value = id;
+
+
+           //criar um button para envio do form
+           let button = document.createElement('button')
+           button.type = 'submit';
+           button.className = 'mt-1 offset-1 col-10 btn btn-dark';
+           button.innerHTML = 'Atualizar';
+
+           //incluir inuptTarefa no form
+           form.appendChild(inputTarefa);
+
+           //incluir button no form
+           form.appendChild(button);
+
+           //incluir inputId no form
+           form.appendChild(inputId);
+
+           //selecionar a div tarefa
+           let tarefa = document.getElementById('tarefa_'+id)
+
+           //limpar o texto da tarefa para inclusao do form
+           tarefa.innerHTML = ''
+
+           //incuir form na página
+           tarefa.insertBefore(form, tarefa[0])
+   }
+
+   function co(id) {
+    if (window.confirm("Você deseja realmente deletar esta nota?")) {
+            window.location.href = 'deletar?id=' + id;
+        }
+    }
+</script>
