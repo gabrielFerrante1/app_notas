@@ -2,4 +2,4 @@
 Este projeto é open-source para ajudar os iniciantes na progamação web.<br>
 <h4>Esté projeto contém o CRUD com o banco de dados e outros recursos interresantes com a linguagem de progamação PHP para ajudar os iniciantes na progamação web com a linguagem PHP<h4>
 <br>
-  <h4>Padrão De Arquitetura Utilizado <h3>MVC</h3></h4>
+  <h4>Padrão De Arquitetura Utilizado <span style="color: blue">MVC</span></h4>
